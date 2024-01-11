@@ -3,17 +3,21 @@
 
 import re
 import logging
-from typing import (
-    List,
-)
-from mysql.connector.connection import MySQLConnection
+from typing import List
+import mysql.connector
 import os
 
 
-def filter_datum(fields: List[str], redaction: str, message: str,
-                 seperator: str) -> str:
+patterns = {
+    'extract': lambda x, y: r'(?P<field>{})=[^{}]*'.format('|'.join(x), y),
+    'replace': lambda x: r'\g<field>={}'.format(x),
+}
+PII_FIELDS = ("name", "email", "phone", "ssn", "password")
+
+
+def filter_datum(
+        fields: List[str], redaction: str, message: str, seperator: str,
+        ) -> str:
     """returns log message obfsucated"""
-    for field in fields:
-        match = r'({}=)([^{}]+)'.format(field, seperator)
-        message = re.sub(match, r'\1{}'.format(redaction), message)
-    return message
+    extract, replace = (patterns["extract"], patterns["replace"])
+    return re.sub(extract(fields, seperator), replace(redaction), message)
