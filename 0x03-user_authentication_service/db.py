@@ -43,3 +43,13 @@ class DB:
         self._session.add(user)
         self._session.commit()
         return user
+
+    def find_user_by(self, **kwargs: Dict[str, Any]) -> User:
+        """Query database to find user using kwargs"""
+        for k in kwargs.keys():
+            if not hasattr(User, k):
+                raise InvalidRequestError
+        user = self._session.query(User).filter_by(**kwargs).first()
+        if user is None:
+            raise NoResultFound
+        return user
