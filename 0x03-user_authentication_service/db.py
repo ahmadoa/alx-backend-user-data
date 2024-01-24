@@ -36,6 +36,6 @@ class DB:
     def add_user(self, email: str, hashed_password: str) -> User:
         """add new user to db, no validations required"""
         user = User(email=email, hashed_password=hashed_password)
-        self._session.add(user)
-        self._session.commit()
+        self.__session.add(user)
+        self.__session.commit()
         return user
