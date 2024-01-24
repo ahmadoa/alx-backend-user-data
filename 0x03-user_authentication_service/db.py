@@ -49,12 +49,15 @@ class DB:
             raise NoResultFound
         return record
 
-    def update_user(self, user_id: int, **kwrags) -> None:
-        """finds user record & updates attributes"""
+    def update_user(self, user_id: int, **kwargs) -> None:
+        """Finds user record and updates attributes"""
         user_record = self.find_user_by(id=user_id)
-        for key in kwargs.keys():
-            if not hasattr(user_record, key):
-                raise ValueError
+
         for key, value in kwargs.items():
-            setattr(user_record, key, value)
+            if hasattr(user_record, key):
+                setattr(user_record, key, value)
+            else:
+                raise ValueError
+
+        self._session.commit()
         return None
