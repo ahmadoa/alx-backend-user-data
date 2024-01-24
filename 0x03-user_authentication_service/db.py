@@ -53,7 +53,7 @@ class DB:
         """finds user record & updates attributes"""
         user_record = self.find_user_by(id=user_id)
         for key in kwargs.keys():
-            if not hasattr(User, key):
+            if not hasattr(user_record, key):
                 raise ValueError
         for key, value in kwargs.items():
             setattr(user_record, key, value)
